@@ -1,0 +1,19 @@
+{
+    "name": "topthink/think-one",
+    "description": "thinkphp 5的图形化辅助工具",
+    "authors": [
+        {
+            "name": "翟帅干",
+            "email": "zhaishuaigan@qq.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "files": [
+            "src/route.php"
+        ],
+        "psr-4": {
+            "think\\one\\": "src/"
+        }
+    }
+}
