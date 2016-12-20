@@ -21,7 +21,16 @@ function think_one_init()
             'filename' => $action
         ]);
     }
-    return \think\App::invokeMethod([$className, $action]);
+    try {
+        return \think\App::invokeMethod([$className, $action]);
+    } catch (\Exception $e) {
+        $className = '\\think\\one\\controller\\EmptyController';
+        return \think\App::invokeMethod([$className, 'index'], [
+            'controller' => $controller,
+            'action'     => $action,
+        ]);
+    }
+
 }, [
     'merge_extra_vars' => true
 ]);

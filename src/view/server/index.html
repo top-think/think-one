@@ -1,0 +1,10 @@
+<div php-extends="common/base"></div>
+
+<ul class="nav nav-pills nav-stacked"
+    php-block="sub-menu"
+    data-active-nav="{:think_one_url()}"
+    data-active-menu="{:think_one_url('server')}">
+    <menu php-include="index/menu"></menu>
+</ul>
+
+<div php-block="main">server/index</div>
