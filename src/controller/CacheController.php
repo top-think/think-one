@@ -2,14 +2,16 @@
 
 namespace think\one\controller;
 
-use think\Config;
-
-class Index extends Base
+class CacheController extends BaseController
 {
 
     public function index()
     {
-        // Config::get('version', 'think.one')
+        return $this->fetch();
+    }
+
+    public function watch()
+    {
         return $this->fetch();
     }
 

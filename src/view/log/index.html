@@ -1,0 +1,24 @@
+<div php-extends="common/base"></div>
+
+<ul class="nav nav-pills nav-stacked"
+    php-block="sub-menu"
+    data-active-nav="{:think_one_url('log')}"
+    data-active-menu="{:think_one_url('log')}">
+    <menu php-include="log/menu"></menu>
+</ul>
+
+<div php-block="main">
+    <h4>日志列表</h4>
+    <table class="table table-bordered">
+        <tr>
+            <td>年份</td>
+            <td>月份</td>
+        </tr>
+        <tr php-repeat="$list as $date">
+            <td width="50">{:substr($date,0,4)}</a></td>
+            <td>
+                <a href="{:think_one_url('log/month?month=' . $date)}">{$date}</a>
+            </td>
+        </tr>
+    </table>
+</div>

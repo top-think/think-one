@@ -10,10 +10,10 @@ function think_one_check_install()
 
 function recurse_copy($src, $des)
 {
-    $dir  = opendir($src);
+    $dir = opendir($src);
     @mkdir($des);
-    while (false !== ( $file = readdir($dir))) {
-        if (( $file != '.' ) && ( $file != '..' )) {
+    while (false !== ($file = readdir($dir))) {
+        if (($file != '.') && ($file != '..')) {
             if (is_dir($src . '/' . $file)) {
                 recurse_copy($src . '/' . $file, $des . '/' . $file);
             } else {
@@ -29,5 +29,10 @@ function recurse_copy($src, $des)
 
 function think_one_assets($assets = '')
 {
-    return '/static/think/one/' . $assets;
+    return '/think/one/assets/' . $assets;
+}
+
+function think_one_url($url = '')
+{
+    return '/think/one/' . $url;
 }

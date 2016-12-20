@@ -1,0 +1,118 @@
+<div php-extends="common/base"></div>
+
+<ul class="nav nav-pills nav-stacked"
+    php-block="sub-menu"
+    data-active-nav="{:think_one_url('log')}"
+    data-active-menu="{:think_one_url('log')}">
+    <menu php-include="log/menu"></menu>
+</ul>
+
+<div php-block="main">
+    <h4>
+        <a href="javascript:history.go(-2);">日志列表</a>
+        -
+        <a href="javascript:history.go(-1);">{:input('month')}</a>
+        -
+        日志详情
+    </h4>
+    <table class="table table-bordered list">
+        <tr>
+            <th width="100">文件名</th>
+            <td>{{log.name}}</td>
+        </tr>
+        <tr>
+            <th>日志位置</th>
+            <td>{{log.path}}</td>
+        </tr>
+        <tr>
+            <th>日志大小</th>
+            <td>{{log.size}}</td>
+        </tr>
+        <tr>
+            <th>行数</th>
+            <td>{{log.line}} 行</td>
+        </tr>
+        <!--<tr>-->
+        <!--<th>当前</th>-->
+        <!--<td>{{log.start}} - {{log.end}} 行</td>-->
+        <!--</tr>-->
+        <tr>
+            <th>日志内容</th>
+            <td>
+                <pre v-if="log.content"><span v-for="(text, line) in log.content">{{line}}. {{text}}</span></pre>
+
+                <nav>
+                    <ul class="pagination">
+                        <li><a href="javascript:void(0)" @click="load(1)">&laquo; 头</a></li>
+                        <li><a href="javascript:void(0)" @click="load(log.start-1000)">&laquo; 1000行</a></li>
+                        <li><a href="javascript:void(0)" @click="load(log.start-100)">&laquo; 100行</a></li>
+                        <li><a href="javascript:void(0)" @click="load(log.start-20)">&laquo; 20行</a></li>
+                        <li><a href="javascript:void(0)" @click="load(log.start-10)">&laquo; 10行</a></li>
+                        <li><a href="javascript:void(0)" @click="load(log.start-5)">&laquo; 5行</a></li>
+                        <li><a href="javascript:void(0)" @click="load(log.start-1)">&laquo; 1行</a></li>
+                        <li><a href="javascript:void(0)" @click="load(parseInt(log.line/2))">1/2</a></li>
+                        <li><a href="javascript:void(0)" @click="load(log.start+1)">1行 &raquo;</a></li>
+                        <li><a href="javascript:void(0)" @click="load(log.start+5)">5行 &raquo;</a></li>
+                        <li><a href="javascript:void(0)" @click="load(log.start+10)">10行 &raquo;</a></li>
+                        <li><a href="javascript:void(0)" @click="load(log.start+20)">20行 &raquo;</a></li>
+                        <li><a href="javascript:void(0)" @click="load(log.start+100)">100行 &raquo;</a></li>
+                        <li><a href="javascript:void(0)" @click="load(log.start+1000)">1000行 &raquo;</a></li>
+                        <li><a href="javascript:void(0)" @click="load(log.line-20)">尾 &raquo;</a></li>
+                    </ul>
+                </nav>
+                <form action="#" class="form-inline">
+                    <label>
+                        <input type="checkbox" @click="watch($event)" v-model="auto"> 监控 / 自动滚动
+                    </label>
+                    |
+                    间隔(ms): <input class="form-control" style="width: 80px" type="number" v-model="sleep"/> 毫秒
+                    |
+                    每次滚动行数: <input class="form-control" style="width: 80px" type="number" v-model="scrollLine"/>
+                </form>
+
+            </td>
+        </tr>
+    </table>
+    <script>
+        $(function () {
+            var list = new Vue({
+                el     : '.list',
+                data   : {
+                    log       : {},
+                    auto      : false,
+                    sleep     : 300,
+                    scrollLine: 1
+                },
+                created: function () {
+                    this.load(0);
+                },
+                methods: {
+                    load      : function (start, done) {
+                        var self = this;
+                        $.get('?name={:input("name")}&start=' + start)
+                                .done(function (result) {
+                                    self.log = result;
+                                    done && done();
+                                });
+                    },
+                    watch     : function () {
+                        var self = this;
+                        setTimeout(function () {
+                            self.autoScroll();
+                        }, 10);
+                    },
+                    autoScroll: function () {
+                        var self = this;
+                        if (self.auto) {
+                            self.log.start += self.scrollLine;
+                            self.load(self.log.start, function () {
+                                setTimeout(self.autoScroll, self.sleep);
+                            });
+                        }
+
+                    }
+                }
+            });
+        })
+    </script>
+</div>

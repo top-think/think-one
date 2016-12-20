@@ -1,0 +1,33 @@
+<div php-extends="common/base"></div>
+
+<ul class="nav nav-pills nav-stacked"
+    php-block="sub-menu"
+    data-active-nav="{:think_one_url('log')}"
+    data-active-menu="{:think_one_url('log')}">
+    <menu php-include="log/menu"></menu>
+</ul>
+
+<div php-block="main">
+    <h4><a href="javascript:history.go(-1);">日志列表</a> - {:input('month')}</h4>
+    <table class="table table-bordered">
+        <tr>
+            <td>时间</td>
+            <td>大小</td>
+            <td>日志位置</td>
+            <td>操作</td>
+        </tr>
+        <tr php-repeat="$logs as $log">
+            <td>
+                <a href="{:think_one_url('log/detail?month=' . input('month') . '&name=' . $log['name'])}">{$log.name}</a>
+            </td>
+            <td>{$log.size}</td>
+            <td>{$log.path}</td>
+            <td>
+                <a href="{:think_one_url('log/detail?month=' . input('month') . '&name=' . $log['name'])}">查看</a>
+                <a href="javascript:void(0);"
+                   data-ajax="{:think_one_url('log/delete?name=' . $log['name'])}"
+                   data-confirm="确认要删除吗?">删除</a>
+            </td>
+        </tr>
+    </table>
+</div>
