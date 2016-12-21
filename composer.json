@@ -7,7 +7,9 @@
             "email": "zhaishuaigan@qq.com"
         }
     ],
-    "require": {},
+    "require": {
+        "topthink/think-angular": "1.0.9"
+    },
     "autoload": {
         "files": [
             "src/route.php"
