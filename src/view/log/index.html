@@ -11,13 +11,11 @@
     <h4>日志列表</h4>
     <table class="table table-bordered">
         <tr>
-            <td>年份</td>
-            <td>月份</td>
+            <td>年月</td>
         </tr>
         <tr php-repeat="$list as $date">
-            <td width="50">{:substr($date,0,4)}</a></td>
             <td>
-                <a href="{:think_one_url('log/month?month=' . $date)}">{$date}</a>
+                <a href="{:think_one_url('log/month?month=' . $date)}">{:substr($date, 0, 4)}-{:substr($date, 4, 2)}</a>
             </td>
         </tr>
     </table>

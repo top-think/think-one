@@ -27,7 +27,7 @@ class BaseController
         // parent::__construct($request);
         require_once THINK_ONE_SRC . 'function.php';
         $configFile = THINK_ONE_SRC . 'config.php';
-        \think\Config::load($configFile, '', 'think.one');
+        \think\Config::load($configFile);
 
     }
 

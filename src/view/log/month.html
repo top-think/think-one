@@ -8,7 +8,11 @@
 </ul>
 
 <div php-block="main">
-    <h4><a href="javascript:history.go(-1);">日志列表</a> - {:input('month')}</h4>
+    <h4>
+        <a href="javascript:history.go(-1);">日志列表</a>
+        -
+        {:substr(input('month'), 0, 4)}-{:substr(input('month'), 4, 2)}
+    </h4>
     <table class="table table-bordered">
         <tr>
             <td>时间</td>
@@ -18,7 +22,9 @@
         </tr>
         <tr php-repeat="$logs as $log">
             <td>
-                <a href="{:think_one_url('log/detail?month=' . input('month') . '&name=' . $log['name'])}">{$log.name}</a>
+                <a href="{:think_one_url('log/detail?month=' . input('month') . '&name=' . $log['name'])}">
+                    {:substr(input('month'), 0, 4)}-{:substr(input('month'), 4, 2)}-{:basename($log['name'])}
+                </a>
             </td>
             <td>{$log.size}</td>
             <td>{$log.path}</td>

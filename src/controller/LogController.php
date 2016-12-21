@@ -23,6 +23,7 @@ class LogController extends BaseController
 
     /**
      * 某月的日志列表
+     * @param string $month
      * @return string
      */
     public function month($month = '')
@@ -37,52 +38,57 @@ class LogController extends BaseController
             ];
         }
         $this->title = '日志列表';
-        $this->assign('logs', $logs);
+        $this->assign('logs', array_reverse($logs));
         return $this->fetch();
     }
 
-    public function detail($name = '', $start = 0, $end = null)
+    /**
+     * 显示日志详情
+     * @param string $name
+     * @param int    $start
+     * @param int    $limit
+     * @return string|\think\response\Json
+     */
+    public function detail($name = '', $start = 1, $limit = 20)
     {
         if (!$this->request->isAjax()) {
             $this->title = '日志详情';
             return $this->fetch();
         }
-        $file  = LOG_PATH . $name;
-        $count = count(file($file));
+        $filename  = LOG_PATH . $name;
+        $file      = file($filename);
+        $countLine = count($file);
 
+        if ($start > $countLine - $limit + 1) {
+            $start = $countLine - $limit + 1;
+        }
         if ($start < 1) {
             $start = 1;
         }
-        if ($start > $count - 20) {
-            $start = $count - 20;
+
+        $end = $start + $limit - 1;
+        if ($end > $countLine) {
+            $end = $countLine;
         }
-        if ($end == null) {
-            $end = $start + 20;
+
+        $content = [];
+        for ($i = $start - 1; $i < $end; $i++) {
+            if (isset($file[$i])) {
+                $content[$i + 1] = $file[$i];
+            }
         }
-        if ($end > $count) {
-            $end = $count;
-        }
+
         $log = [
             'name'    => $name,
-            'size'    => $this->sizeFormat(filesize($file)),
-            'path'    => str_replace('\\', '/', $file),
-            'line'    => $count,
+            'size'    => $this->sizeFormat(filesize($filename)),
+            'path'    => str_replace('\\', '/', $filename),
+            'line'    => $countLine,
             'start'   => (int) $start,
             'end'     => (int) $end,
-            'content' => $this->read($name, $start, $end),
+            'content' => $content,
         ];
 
         return json($log);
-    }
-
-    private function read($name, $start = 1, $end = -1)
-    {
-        $file   = file(LOG_PATH . $name);
-        $result = [];
-        for ($line = $start - 1; $line < $end - 1; $line++) {
-            $result[$line + 1] = $file[$line];
-        }
-        return $result;
     }
 
     public function delete($name = '')

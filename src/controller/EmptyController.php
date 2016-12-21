@@ -10,16 +10,19 @@
 // +----------------------------------------------------------------------
 namespace think\one\controller;
 
+use think\Loader;
+
 class EmptyController extends BaseController
 {
 
     public function index($controller = '', $action = '')
     {
         $this->assign([
-            'controller' => $controller,
+            'controller' => Loader::parseName($controller),
             'action'     => $action,
+            'menu'       => $controller . '/menu'
         ]);
-        return $this->fetch();
+        return $this->fetch('empty/index');
     }
 
 }

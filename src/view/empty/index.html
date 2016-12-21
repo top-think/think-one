@@ -1,3 +1,12 @@
 <div php-extends="common/base"></div>
 
-<div php-block="main">页面功能还没有完成: {$controller}/{$action}</div>
+<ul class="nav nav-pills nav-stacked"
+    php-block="sub-menu"
+    data-active-nav="{:think_one_url($controller)}"
+    data-active-menu="{:think_one_url($controller . '/' . $action)}">
+    <menu php-include="$menu"></menu>
+</ul>
+
+<div php-block="main">
+    页面功能还没有完成: {$controller}/{$action}
+</div>

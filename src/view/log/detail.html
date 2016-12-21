@@ -1,5 +1,15 @@
 <div php-extends="common/base"></div>
 
+<style php-block="style">
+    th {
+        width: 100px;
+    }
+
+    .form-inline .form-control[type="number"] {
+        width: 80px;
+    }
+</style>
+
 <ul class="nav nav-pills nav-stacked"
     php-block="sub-menu"
     data-active-nav="{:think_one_url('log')}"
@@ -11,15 +21,15 @@
     <h4>
         <a href="javascript:history.go(-2);">日志列表</a>
         -
-        <a href="javascript:history.go(-1);">{:input('month')}</a>
+        <a href="javascript:history.go(-1);">{:substr(input('month'), 0, 4)}-{:substr(input('month'), 4, 2)}</a>
         -
-        日志详情
+        {:substr(input('month'), 0, 4)}-{:substr(input('month'), 4, 2)}-{:basename(input('name'))}
     </h4>
     <table class="table table-bordered list">
-        <tr>
-            <th width="100">文件名</th>
-            <td>{{log.name}}</td>
-        </tr>
+        <!--<tr>-->
+        <!--<th>文件名</th>-->
+        <!--<td>{{log.name}}</td>-->
+        <!--</tr>-->
         <tr>
             <th>日志位置</th>
             <td>{{log.path}}</td>
@@ -32,10 +42,10 @@
             <th>行数</th>
             <td>{{log.line}} 行</td>
         </tr>
-        <!--<tr>-->
-        <!--<th>当前</th>-->
-        <!--<td>{{log.start}} - {{log.end}} 行</td>-->
-        <!--</tr>-->
+        <tr>
+            <th>当前</th>
+            <td>{{log.start}} - {{log.end}} 行</td>
+        </tr>
         <tr>
             <th>日志内容</th>
             <td>
@@ -44,30 +54,38 @@
                 <nav>
                     <ul class="pagination">
                         <li><a href="javascript:void(0)" @click="load(1)">&laquo; 头</a></li>
-                        <li><a href="javascript:void(0)" @click="load(log.start-1000)">&laquo; 1000行</a></li>
-                        <li><a href="javascript:void(0)" @click="load(log.start-100)">&laquo; 100行</a></li>
-                        <li><a href="javascript:void(0)" @click="load(log.start-20)">&laquo; 20行</a></li>
-                        <li><a href="javascript:void(0)" @click="load(log.start-10)">&laquo; 10行</a></li>
                         <li><a href="javascript:void(0)" @click="load(log.start-5)">&laquo; 5行</a></li>
                         <li><a href="javascript:void(0)" @click="load(log.start-1)">&laquo; 1行</a></li>
                         <li><a href="javascript:void(0)" @click="load(parseInt(log.line/2))">1/2</a></li>
                         <li><a href="javascript:void(0)" @click="load(log.start+1)">1行 &raquo;</a></li>
                         <li><a href="javascript:void(0)" @click="load(log.start+5)">5行 &raquo;</a></li>
-                        <li><a href="javascript:void(0)" @click="load(log.start+10)">10行 &raquo;</a></li>
-                        <li><a href="javascript:void(0)" @click="load(log.start+20)">20行 &raquo;</a></li>
-                        <li><a href="javascript:void(0)" @click="load(log.start+100)">100行 &raquo;</a></li>
-                        <li><a href="javascript:void(0)" @click="load(log.start+1000)">1000行 &raquo;</a></li>
-                        <li><a href="javascript:void(0)" @click="load(log.line-20)">尾 &raquo;</a></li>
+                        <li><a href="javascript:void(0)" @click="load(log.line)">尾 &raquo;</a></li>
                     </ul>
+
                 </nav>
                 <form action="#" class="form-inline">
                     <label>
+                        显示行数: <input class="form-control" type="number" @change="load(log.start)" v-model="limit"/>
+                    </label>
+
+                    <label>
+                        <span>　　跳转到: </span>
+                        <input class="form-control"
+                               type="number"
+                               @change="load(log.start)"
+                               v-model="log.start"/> /
+                        {{log.line}}
+                    </label>
+                    <br>
+                    <label>
                         <input type="checkbox" @click="watch($event)" v-model="auto"> 监控 / 自动滚动
                     </label>
+                    (
+                    间隔(ms): <input class="form-control" type="number" v-model="sleep"/> 毫秒
                     |
-                    间隔(ms): <input class="form-control" style="width: 80px" type="number" v-model="sleep"/> 毫秒
-                    |
-                    每次滚动行数: <input class="form-control" style="width: 80px" type="number" v-model="scrollLine"/>
+                    每次滚动行数: <input class="form-control" type="number" v-model="scrollLine"/>
+                    )
+
                 </form>
 
             </td>
@@ -80,8 +98,9 @@
                 data   : {
                     log       : {},
                     auto      : false,
-                    sleep     : 300,
-                    scrollLine: 1
+                    sleep     : 100,
+                    scrollLine: 1,
+                    limit     : 20
                 },
                 created: function () {
                     this.load(0);
@@ -89,7 +108,7 @@
                 methods: {
                     load      : function (start, done) {
                         var self = this;
-                        $.get('?name={:input("name")}&start=' + start)
+                        $.get('?name={:input("name")}&start=' + start + '&limit=' + self.limit)
                                 .done(function (result) {
                                     self.log = result;
                                     done && done();
